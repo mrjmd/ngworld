@@ -11,6 +11,7 @@ export const normalizeOptions = (options: any, configFilePath: string) => {
 export const createProgramFromTsConfig = (configFile: string, overrideFiles: string[] = undefined): ts.Program => {
   console.log(cyan('📝  Creating a program...'));
   const projectDirectory = dirname(configFile);
+  console.log('project directory: ' + projectDirectory);
   const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
 
   // Any because of different APIs in TypeScript 2.1 and 2.0
@@ -21,9 +22,11 @@ export const createProgramFromTsConfig = (configFile: string, overrideFiles: str
     useCaseSensitiveFileNames: true,
   };
   const parsed = ts.parseJsonConfigFileContent(config, parseConfigHost, projectDirectory);
+  console.log('parsed: ' + parsed);
   parsed.options.baseUrl = parsed.options.baseUrl || projectDirectory;
   normalizeOptions(parsed.options, configFile);
   const host = ts.createCompilerHost(parsed.options, true);
+  console.log('host ready');
   const program = ts.createProgram(overrideFiles || parsed.fileNames, parsed.options, host);
 
   console.log(green('✅  Program created!'));
